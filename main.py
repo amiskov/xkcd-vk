@@ -19,8 +19,9 @@ def main():
 
     comic_path, comic_alt = download_random_xkcd()
     post_to_vk_group(VK_ACCESS_TOKEN, VK_GROUP_ID, comic_path, comic_alt)
+    logging.info(f'Removing {comic_path}...')
     comic_path.unlink()
-    logging.info(f'File {comic_path} was successfully posted and removed.')
+    logging.info(f'Done!')
 
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@ def get_comic_info(id: int) -> tuple[str, str]:
 
     > get_comic_info(353)
     ('https://imgs.xkcd.com/comics/python.png',
-     "I wrote 20 short programs in Python yesterday.  It was wonderful.  Perl, I'm leaving you.")
+     "I wrote 20 short programs in Python yesterday...")
     """
     comic_url = f'https://xkcd.com/{id}/info.0.json'
     resp = requests.get(comic_url)

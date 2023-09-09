@@ -12,12 +12,14 @@ def post_to_vk_group(access_token: str, group_id: str, comic_path: Path,
     uploaded_img = upload_img(comic_path, upload_url)
     wall_photo = save_wall_photo(access_token, group_id, uploaded_img['photo'],
                                  uploaded_img['server'], uploaded_img['hash'])
-    post_to_wall(access_token, group_id, comic_alt, wall_photo['owner_id'],
-                 wall_photo['id'])
+    post_id = post_to_wall(access_token, group_id, comic_alt,
+                           wall_photo['owner_id'], wall_photo['id'])
+    post_url = f'https://vk.com/wall-222477056_{post_id}.'
+    logging.info(f'{comic_path} was successfully posted: {post_url}')
 
 
 def post_to_wall(access_token: str, group_id: str, message: str, owner_id: int,
-                 media_id: int):
+                 media_id: int) -> int:
     url = f'{VK_API_URL}/wall.post'
     params = {
         'owner_id': f'-{group_id}',
@@ -30,7 +32,7 @@ def post_to_wall(access_token: str, group_id: str, message: str, owner_id: int,
     }
     resp = requests.get(url, params=params)
     resp.raise_for_status()
-    return resp.json()
+    return resp.json()['response']['post_id']
 
 
 def upload_img(filename: Path, upload_url: str):
@@ -69,21 +71,3 @@ def get_upload_url(access_token: str, group_id: str) -> str:
     resp = requests.get(url, params=params)
     resp.raise_for_status()
     return resp.json()['response']['upload_url']
-
-
-def download_image(dir: str, url: str) -> Path:
-    """Download an image by `url` to `dir`.
-
-    `url` must have a file extension at the end (`.png`, `.jpg`, etc).
-    """
-    response = requests.get(url)
-    response.raise_for_status()
-
-    images_path = Path(dir)
-    images_path.mkdir(exist_ok=True)
-
-    filename = url.split('/')[-1]
-    with open(images_path.joinpath(filename), 'wb') as file:
-        file.write(response.content)
-        logging.info(f'{filename} has been saved.')
-        return images_path / filename
