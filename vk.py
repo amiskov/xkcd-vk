@@ -41,8 +41,8 @@ def upload_img(filename: Path, upload_url: str):
             'photo': file,
         }
         resp = requests.post(upload_url, files=files)
-        resp.raise_for_status()
-        return resp.json()
+    resp.raise_for_status()
+    return resp.json()
 
 
 def save_wall_photo(access_token: str, group_id: str, photo: str, server: int,

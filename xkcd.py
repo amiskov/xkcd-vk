@@ -47,5 +47,5 @@ def download_image(dir: str, url: str) -> Path:
     filename = url.split('/')[-1]
     with open(images_path.joinpath(filename), 'wb') as file:
         file.write(response.content)
-        logging.info(f'{filename} has been saved.')
-        return images_path / filename
+    logging.info(f'{filename} has been saved.')
+    return images_path / filename
