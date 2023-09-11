@@ -14,11 +14,11 @@ def main():
 
     env = Env()
     env.read_env()
-    VK_ACCESS_TOKEN = env('VK_ACCESS_TOKEN')
-    VK_GROUP_ID = env('VK_GROUP_ID')
+    vk_access_token = env('VK_ACCESS_TOKEN')
+    vk_group_id = env('VK_GROUP_ID')
 
     comic_path, comic_alt = download_random_xkcd()
-    post_to_vk_group(VK_ACCESS_TOKEN, VK_GROUP_ID, comic_path, comic_alt)
+    post_to_vk_group(vk_access_token, vk_group_id, comic_path, comic_alt)
     logging.info(f'Removing {comic_path}...')
     comic_path.unlink()
     logging.info(f'Done!')
