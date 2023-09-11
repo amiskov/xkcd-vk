@@ -18,9 +18,12 @@ def main():
     vk_access_token = env('VK_ACCESS_TOKEN')
     vk_group_id = env('VK_GROUP_ID')
 
+    images_dir = Path('.')
+    images_dir.mkdir(exist_ok=True)
+
     comic_path, comic_alt = None, ''
     try:
-        comic_path, comic_alt = download_random_xkcd()
+        comic_path, comic_alt = download_random_xkcd(images_dir)
         post_to_vk_group(vk_access_token, vk_group_id, comic_path, comic_alt)
     finally:
         if isinstance(comic_path, Path):

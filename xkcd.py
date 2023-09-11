@@ -4,13 +4,11 @@ import logging
 
 import requests
 
-IMG_FOLDER = '.'
 
-
-def download_random_xkcd() -> tuple[Path, str]:
+def download_random_xkcd(images_dir: Path) -> tuple[Path, str]:
     comic_id = get_random_comic_id()
     url, alt = get_comic_info(comic_id)
-    return download_image(IMG_FOLDER, url), alt
+    return download_image(images_dir, url), alt
 
 
 def get_comic_info(id: int) -> tuple[str, str]:
@@ -33,7 +31,7 @@ def get_random_comic_id() -> int:
     return random.randint(1, resp.json()['num'])
 
 
-def download_image(dir: str, url: str) -> Path:
+def download_image(dir: Path, url: str) -> Path:
     """Download an image by `url` to `dir`.
 
     `url` must have a file extension at the end (`.png`, `.jpg`, etc).
@@ -41,11 +39,8 @@ def download_image(dir: str, url: str) -> Path:
     response = requests.get(url)
     response.raise_for_status()
 
-    images_path = Path(dir)
-    images_path.mkdir(exist_ok=True)
-
     filename = url.split('/')[-1]
-    with open(images_path.joinpath(filename), 'wb') as file:
+    with open(dir.joinpath(filename), 'wb') as file:
         file.write(response.content)
     logging.info(f'{filename} has been saved.')
-    return images_path / filename
+    return dir / filename
