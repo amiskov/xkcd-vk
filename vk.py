@@ -14,7 +14,7 @@ def post_to_vk_group(access_token: str, group_id: str, comic_path: Path,
                                  uploaded_img['server'], uploaded_img['hash'])
     post_id = post_to_wall(access_token, group_id, comic_alt,
                            wall_photo['owner_id'], wall_photo['id'])
-    post_url = f'https://vk.com/wall-222477056_{post_id}.'
+    post_url = f'https://vk.com/wall-{group_id}_{post_id}.'
     logging.info(f'{comic_path} was successfully posted: {post_url}')
 
 
