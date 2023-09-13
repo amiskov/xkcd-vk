@@ -40,8 +40,8 @@ def post_to_wall(access_token: str, group_id: str, message: str, owner_id: int,
 
     if 'error' in post_status:
         error = post_status['error']
-        raise VKAPIError(
-            f'wall.post failed with code {error["error_code"]}: {error["error_msg"]}')
+        raise VKAPIError(f'wall.post failed with code ' +
+                         f'{error["error_code"]}: {error["error_msg"]}')
 
     return post_status['response']['post_id']
 
@@ -78,8 +78,8 @@ def save_wall_photo(access_token: str, group_id: str, photo: str, server: int,
 
     if 'error' in resp_msg:
         error = resp_msg['error']
-        raise VKAPIError(
-            f'photos.saveWallPhoto failed with code {error["error_code"]}: {error["error_msg"]}')
+        raise VKAPIError(f'photos.saveWallPhoto failed with code ' +
+                         f'{error["error_code"]}: {error["error_msg"]}')
 
     return resp_msg['response'][0]
 
@@ -97,7 +97,7 @@ def get_upload_url(access_token: str, group_id: str) -> str:
 
     if 'error' in resp_url:
         error = resp_url['error']
-        raise VKAPIError(
-            f'photos.getWallUploadServer failed with code {error["error_code"]}: {error["error_msg"]}')
+        raise VKAPIError(f'photos.getWallUploadServer failed with code ' +
+                         f'{error["error_code"]}: {error["error_msg"]}')
 
     return resp_url['response']['upload_url']
