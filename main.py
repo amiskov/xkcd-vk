@@ -1,9 +1,10 @@
 import logging
 
 from environs import Env
+import requests
 
 from xkcd import download_random_xkcd
-from vk import post_to_vk_group
+from vk import post_to_vk_group, VKAPIError
 from pathlib import Path
 
 
@@ -25,12 +26,14 @@ def main():
     try:
         comic_path, comic_alt = download_random_xkcd(images_dir)
         post_to_vk_group(vk_access_token, vk_group_id, comic_path, comic_alt)
+    except VKAPIError as e:
+        logging.error(f'VK API: {e}')
+    except requests.RequestException as e:
+        logging.error(f'HTTP: {e}')
     finally:
         if isinstance(comic_path, Path):
             logging.info(f'Removing {comic_path}...')
             comic_path.unlink()
-
-    logging.info(f'Done!')
 
 
 if __name__ == '__main__':

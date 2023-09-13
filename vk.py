@@ -6,6 +6,10 @@ import requests
 VK_API_URL = 'https://api.vk.com/method'
 
 
+class VKAPIError(requests.HTTPError):
+    ...
+
+
 def post_to_vk_group(access_token: str, group_id: str, comic_path: Path,
                      comic_alt: str):
     upload_url = get_upload_url(access_token, group_id)
@@ -32,7 +36,14 @@ def post_to_wall(access_token: str, group_id: str, message: str, owner_id: int,
     }
     resp = requests.get(url, params=params)
     resp.raise_for_status()
-    return resp.json()['response']['post_id']
+    post_status = resp.json()
+
+    if 'error' in post_status:
+        error = post_status['error']
+        raise VKAPIError(
+            f'wall.post failed with code {error["error_code"]}: {error["error_msg"]}')
+
+    return post_status['response']['post_id']
 
 
 def upload_img(filename: Path, upload_url: str):
@@ -42,7 +53,12 @@ def upload_img(filename: Path, upload_url: str):
         }
         resp = requests.post(upload_url, files=files)
     resp.raise_for_status()
-    return resp.json()
+    upload_status = resp.json()
+
+    if upload_status.get('photo') == '[]':
+        raise VKAPIError(f'Failed uploading {filename}.')
+
+    return upload_status
 
 
 def save_wall_photo(access_token: str, group_id: str, photo: str, server: int,
@@ -58,7 +74,14 @@ def save_wall_photo(access_token: str, group_id: str, photo: str, server: int,
     }
     resp = requests.get(url, params=params)
     resp.raise_for_status()
-    return resp.json()['response'][0]
+    resp_msg = resp.json()
+
+    if 'error' in resp_msg:
+        error = resp_msg['error']
+        raise VKAPIError(
+            f'photos.saveWallPhoto failed with code {error["error_code"]}: {error["error_msg"]}')
+
+    return resp_msg['response'][0]
 
 
 def get_upload_url(access_token: str, group_id: str) -> str:
@@ -70,4 +93,11 @@ def get_upload_url(access_token: str, group_id: str) -> str:
     }
     resp = requests.get(url, params=params)
     resp.raise_for_status()
-    return resp.json()['response']['upload_url']
+    resp_url = resp.json()
+
+    if 'error' in resp_url:
+        error = resp_url['error']
+        raise VKAPIError(
+            f'photos.getWallUploadServer failed with code {error["error_code"]}: {error["error_msg"]}')
+
+    return resp_url['response']['upload_url']
